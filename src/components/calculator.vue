@@ -3,12 +3,12 @@
     <h1>{{ message }}</h1>
   
     <div class='operands'>
-      <input type="number" v-model.number="op1">
-      <input type="number" v-model.number="op2">
+      <input type="text" v-model="op1">
+      <input type="text" v-model="op2">
     </div>
 
     <div class="calculations">
-      <button v-on:click="result = op1 + op2">+</button>
+      <button v-on:click="result = parseInt(op1) + parseInt(op2)">+</button>
       <button v-on:click="result = op1 - op2">-</button>
       <button v-on:click="mul">*</button>
       <button v-on:click="del">/</button>
@@ -17,6 +17,19 @@
     </div>
 
     <div class='result'>Результат: {{ result }}</div>
+
+    <div class="claviatura">
+      <input type="checkbox" id="checkbox" v-model="checked">
+      <label for="checkbox">Клавиатура</label>
+      <input type="radio" id="one" value="onePick" v-model="picked">
+      <label for="one">Operand 1</label>
+      <input type="radio" id="two" value="twoPick" v-model="picked">
+      <label for="two">Operand 2</label>
+      <div class="clavishi" v-if='checked'>
+        <button v-for="(num, idnum) in masNumber" :key="idnum" @click="clac(num)">{{num}}</button>
+        <button v-html="backspace" @click="back"></button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -29,9 +42,13 @@ export default {
   data() {
     return {
       message: 'Калькулятор',
-      op1: 0,
-      op2: 0,
-      result: 0,
+      op1: '',
+      op2: '',
+      result: '-',
+      masNumber: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      checked: false,
+      picked: 'onePick',
+      backspace:"&larr;"
     }
   },
   methods: {
@@ -41,6 +58,14 @@ export default {
     del() {
       const {op1, op2} = this
       this.result = op1 / op2;
+    },
+    clac(num) {
+      if (this.picked === 'onePick') this.op1 +=num;
+      else this.op2 +=num;
+    },
+    back() {
+      if (this.picked === 'onePick') this.op1 = this.op1.slice(0, -1);
+      else this.op2 = this.op2.slice(0, -1);
     }
   },
 }
@@ -50,6 +75,7 @@ export default {
   .calculator {
     display: flex;
     flex-direction: column;
+    max-width: 30%;
     & > div {
       margin-top: 20px;
     }
@@ -68,5 +94,13 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-around;
+  }
+  .clavishi {
+    display: flex;
+    justify-content: space-evenly;
+    & div {
+      border: 1px solid #000;
+      padding: 10px 15px;
+    }
   }
 </style>
